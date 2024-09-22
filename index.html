@@ -94,7 +94,7 @@
                 Modifier
               </button>
               <button
-                @click="deleteContact(contact.id)"
+                @click="deleteOneById(contact.id)"
                 class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md"
               >
                 Supprimer
@@ -182,9 +182,10 @@
               this.currentContactId = null;
             }
           },
-          deleteContact(id) {
+          // Méthode pour supprimer un contact en utilisant son ID
+          deleteOneById(id) {
             this.contacts = this.contacts.filter(contact => contact.id !== id);
-            localStorage.setItem('contacts', JSON.stringify(this.contacts));
+            localStorage.setItem('contacts', JSON.stringify(this.contacts)); // Mise à jour du localStorage
           }
         },
         mounted() {
