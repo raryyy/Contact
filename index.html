@@ -43,10 +43,10 @@
           />
         </div>
         <button
-          @click="addOrUpdateContact"
+          @click="addOne"
           class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
         >
-          Ajouter/Modifier le contact
+          Ajouter le contact
         </button>
       </aside>
 
@@ -142,13 +142,14 @@
               this.contacts = JSON.parse(localStorage.getItem('contacts'));
             }
           },
-          addOrUpdateContact() {
+          // Méthode pour ajouter un contact avec un ID unique
+          addOne() {
             if (this.newContact.name && this.newContact.phone && this.newContact.email) {
-              const newId = Date.now();
+              const newId = Date.now(); // Génération d'un id unique
               const contact = { ...this.newContact, id: newId };
-              this.contacts.push(contact);
-              localStorage.setItem('contacts', JSON.stringify(this.contacts));
-              this.newContact = { name: '', phone: '', email: '' }; // Reset form
+              this.contacts.push(contact); // Ajouter le contact à la liste
+              localStorage.setItem('contacts', JSON.stringify(this.contacts)); // Sauvegarder dans le localStorage
+              this.newContact = { name: '', phone: '', email: '' }; // Réinitialisation du formulaire
             }
           },
           deleteContact(id) {
