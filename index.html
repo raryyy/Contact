@@ -43,18 +43,10 @@
           />
         </div>
         <button
-          v-if="isEditing"
-          @click="updateOneById(currentContactId)"
-          class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md"
-        >
-          Modifier le contact
-        </button>
-        <button
-          v-else
-          @click="addOne"
+          @click="isEditing ? updateOneById(currentContactId) : addOne()"
           class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
         >
-          Ajouter le contact
+          {{ isEditing ? 'Modifier le contact' : 'Ajouter le contact' }}
         </button>
       </aside>
 
@@ -159,7 +151,7 @@
               const contact = { ...this.newContact, id: newId };
               this.contacts.push(contact); // Ajouter le contact à la liste
               localStorage.setItem('contacts', JSON.stringify(this.contacts)); // Sauvegarder dans le localStorage
-              this.newContact = { name: '', phone: '', email: '' }; // Réinitialisation du formulaire
+              this.resetForm(); // Réinitialisation du formulaire
             }
           },
           // Méthode pour remplir le formulaire avec un contact existant
@@ -177,7 +169,7 @@
             if (index !== -1) {
               this.contacts[index] = { ...this.newContact, id }; // Mettre à jour le contact
               localStorage.setItem('contacts', JSON.stringify(this.contacts)); // Sauvegarder dans le localStorage
-              this.newContact = { name: '', phone: '', email: '' }; // Réinitialisation du formulaire
+              this.resetForm(); // Réinitialisation du formulaire
               this.isEditing = false; // Quitter le mode modification
               this.currentContactId = null;
             }
@@ -186,6 +178,10 @@
           deleteOneById(id) {
             this.contacts = this.contacts.filter(contact => contact.id !== id);
             localStorage.setItem('contacts', JSON.stringify(this.contacts)); // Mise à jour du localStorage
+          },
+          // Réinitialisation du formulaire
+          resetForm() {
+            this.newContact = { name: '', phone: '', email: '' }; // Réinitialisation du formulaire
           }
         },
         mounted() {
