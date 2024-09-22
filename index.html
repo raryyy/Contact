@@ -53,7 +53,7 @@
       <!-- Section droite pour la liste des contacts -->
       <section class="w-2/3 p-6">
         <h2 class="text-xl font-bold mb-4">Liste des Contacts</h2>
-        <p class="text-gray-600 mb-4">Nombre de contacts : {{ contacts.length }}</p>
+        <p class="text-gray-600 mb-4">Nombre de contacts : {{ sortedContacts.length }}</p>
 
         <!-- Filtre de recherche -->
         <div class="mb-4">
@@ -68,7 +68,7 @@
         <!-- Liste des contacts triée et filtrée avec id affiché -->
         <ul class="space-y-4">
           <li
-            v-for="contact in filteredContacts"
+            v-for="contact in sortedContacts"
             :key="contact.id"
             class="flex justify-between items-center bg-gray-50 p-4 rounded-lg shadow-sm"
           >
@@ -109,8 +109,8 @@
               phone: '',
               email: ''
             },
-            currentContactId: null, // Pour savoir quel contact est en train d'être modifié
-            isEditing: false, // Indique si on est en mode modification
+            currentContactId: null,
+            isEditing: false,
             searchQuery: ''
           };
         },
@@ -119,6 +119,9 @@
             return this.contacts.filter(contact =>
               contact.name.toLowerCase().includes(this.searchQuery.toLowerCase())
             );
+          },
+          sortedContacts() {
+            return this.filteredContacts.sort((a, b) => a.name.localeCompare(b.name));
           }
         },
         methods: {
@@ -144,50 +147,44 @@
               this.contacts = JSON.parse(localStorage.getItem('contacts'));
             }
           },
-          // Méthode pour ajouter un contact avec un ID unique
           addOne() {
             if (this.newContact.name && this.newContact.phone && this.newContact.email) {
-              const newId = Date.now(); // Génération d'un id unique
+              const newId = Date.now();
               const contact = { ...this.newContact, id: newId };
-              this.contacts.push(contact); // Ajouter le contact à la liste
-              this.resetForm(); // Réinitialisation du formulaire
+              this.contacts.push(contact);
+              this.resetForm();
             }
           },
-          // Méthode pour remplir le formulaire avec un contact existant
           editOneById(id) {
             const contact = this.contacts.find(c => c.id === id);
             if (contact) {
               this.newContact = { ...contact };
-              this.currentContactId = id; // Sauvegarde de l'ID du contact en cours de modification
+              this.currentContactId = id;
               this.isEditing = true;
             }
           },
-          // Méthode pour mettre à jour un contact existant
           updateOneById(id) {
             const index = this.contacts.findIndex(c => c.id === id);
             if (index !== -1) {
-              this.contacts[index] = { ...this.newContact, id }; // Mettre à jour le contact
-              this.resetForm(); // Réinitialisation du formulaire
-              this.isEditing = false; // Quitter le mode modification
+              this.contacts[index] = { ...this.newContact, id };
+              this.resetForm();
+              this.isEditing = false;
               this.currentContactId = null;
             }
           },
-          // Méthode pour supprimer un contact en utilisant son ID
           deleteOneById(id) {
             this.contacts = this.contacts.filter(contact => contact.id !== id);
           },
-          // Réinitialisation du formulaire
           resetForm() {
-            this.newContact = { name: '', phone: '', email: '' }; // Réinitialisation du formulaire
+            this.newContact = { name: '', phone: '', email: '' };
           }
         },
         watch: {
-          // Watcher profond pour surveiller les changements dans contacts
           contacts: {
             handler(newContacts) {
               localStorage.setItem('contacts', JSON.stringify(newContacts));
             },
-            deep: true // Profondeur pour surveiller les objets à l'intérieur du tableau
+            deep: true
           }
         },
         mounted() {
