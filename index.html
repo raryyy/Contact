@@ -43,6 +43,14 @@
           />
         </div>
         <button
+          v-if="isEditing"
+          @click="updateOneById(currentContactId)"
+          class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md"
+        >
+          Modifier le contact
+        </button>
+        <button
+          v-else
           @click="addOne"
           class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
         >
@@ -80,7 +88,7 @@
             </div>
             <div class="flex space-x-2">
               <button
-                @click="editContact(contact)"
+                @click="editOneById(contact.id)"
                 class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-md"
               >
                 Modifier
@@ -109,6 +117,8 @@
               phone: '',
               email: ''
             },
+            currentContactId: null, // Pour savoir quel contact est en train d'être modifié
+            isEditing: false, // Indique si on est en mode modification
             searchQuery: ''
           };
         },
@@ -152,13 +162,29 @@
               this.newContact = { name: '', phone: '', email: '' }; // Réinitialisation du formulaire
             }
           },
+          // Méthode pour remplir le formulaire avec un contact existant
+          editOneById(id) {
+            const contact = this.contacts.find(c => c.id === id);
+            if (contact) {
+              this.newContact = { ...contact };
+              this.currentContactId = id; // Sauvegarde de l'ID du contact en cours de modification
+              this.isEditing = true;
+            }
+          },
+          // Méthode pour mettre à jour un contact existant
+          updateOneById(id) {
+            const index = this.contacts.findIndex(c => c.id === id);
+            if (index !== -1) {
+              this.contacts[index] = { ...this.newContact, id }; // Mettre à jour le contact
+              localStorage.setItem('contacts', JSON.stringify(this.contacts)); // Sauvegarder dans le localStorage
+              this.newContact = { name: '', phone: '', email: '' }; // Réinitialisation du formulaire
+              this.isEditing = false; // Quitter le mode modification
+              this.currentContactId = null;
+            }
+          },
           deleteContact(id) {
             this.contacts = this.contacts.filter(contact => contact.id !== id);
             localStorage.setItem('contacts', JSON.stringify(this.contacts));
-          },
-          editContact(contact) {
-            this.newContact = { ...contact };
-            this.deleteContact(contact.id); // Supprimer pour mise à jour après modification
           }
         },
         mounted() {
