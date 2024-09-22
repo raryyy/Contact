@@ -53,7 +53,7 @@
       <!-- Section droite pour la liste des contacts -->
       <section class="w-2/3 p-6">
         <h2 class="text-xl font-bold mb-4">Liste des Contacts</h2>
-        <p class="text-gray-600 mb-4">Nombre de contacts : {{ sortedContacts.length }}</p>
+        <p class="text-gray-600 mb-4">Nombre de contacts : {{ filteredContacts.length }}</p>
 
         <!-- Filtre de recherche -->
         <div class="mb-4">
@@ -61,7 +61,7 @@
             v-model="searchQuery"
             type="text"
             class="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            placeholder="Rechercher un contact"
+            placeholder="Rechercher un contact par nom, téléphone ou email"
           />
         </div>
 
@@ -117,7 +117,9 @@
         computed: {
           filteredContacts() {
             return this.contacts.filter(contact =>
-              contact.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+              contact.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+              contact.phone.includes(this.searchQuery) ||
+              contact.email.toLowerCase().includes(this.searchQuery.toLowerCase())
             );
           },
           sortedContacts() {
