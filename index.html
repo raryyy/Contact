@@ -150,7 +150,6 @@
               const newId = Date.now(); // Génération d'un id unique
               const contact = { ...this.newContact, id: newId };
               this.contacts.push(contact); // Ajouter le contact à la liste
-              localStorage.setItem('contacts', JSON.stringify(this.contacts)); // Sauvegarder dans le localStorage
               this.resetForm(); // Réinitialisation du formulaire
             }
           },
@@ -168,7 +167,6 @@
             const index = this.contacts.findIndex(c => c.id === id);
             if (index !== -1) {
               this.contacts[index] = { ...this.newContact, id }; // Mettre à jour le contact
-              localStorage.setItem('contacts', JSON.stringify(this.contacts)); // Sauvegarder dans le localStorage
               this.resetForm(); // Réinitialisation du formulaire
               this.isEditing = false; // Quitter le mode modification
               this.currentContactId = null;
@@ -177,11 +175,19 @@
           // Méthode pour supprimer un contact en utilisant son ID
           deleteOneById(id) {
             this.contacts = this.contacts.filter(contact => contact.id !== id);
-            localStorage.setItem('contacts', JSON.stringify(this.contacts)); // Mise à jour du localStorage
           },
           // Réinitialisation du formulaire
           resetForm() {
             this.newContact = { name: '', phone: '', email: '' }; // Réinitialisation du formulaire
+          }
+        },
+        watch: {
+          // Watcher profond pour surveiller les changements dans contacts
+          contacts: {
+            handler(newContacts) {
+              localStorage.setItem('contacts', JSON.stringify(newContacts));
+            },
+            deep: true // Profondeur pour surveiller les objets à l'intérieur du tableau
           }
         },
         mounted() {
